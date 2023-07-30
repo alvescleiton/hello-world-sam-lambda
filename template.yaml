@@ -20,6 +20,8 @@ Resources:
       CodeUri: hello-world/
       Handler: app.lambdaHandler
       Runtime: nodejs16.x
+      Policies:
+        - AmazonDynamoDBFullAccess
       Architectures:
         - x86_64
       Events:
@@ -28,6 +30,38 @@ Resources:
           Properties:
             Path: /hello
             Method: get
+
+  MySQSQueueFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Timeout: 10
+      CodeUri: hello-world/
+      Handler: test_sqs.sqsLambaHandler
+      Runtime: nodejs16.x
+      Events:
+        MySQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt MySqsQueue.Arn
+            BatchSize: 10
+
+  MySqsQueue:
+    Type: AWS::SQS::Queue
+
+  TestDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput: 
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
