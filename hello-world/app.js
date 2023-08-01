@@ -9,12 +9,19 @@ exports.lambdaHandler = async (event, context) => {
     const table = "hello-world-sam-stack-TestDynamoDBTable-1DCGEAEW1NVDM"
 
     try {
-        // await createItem(table, docClient);
-        await readItem(table, docClient);
-        await updateItem(table, docClient);
-        await deleteItem(table, docClient);
+        await createItem(table, docClient);
+        // await readItem(table, docClient);
+        // await updateItem(table, docClient);
+        // await deleteItem(table, docClient);
     } catch(err) {
         console.log(err);
+    }
+
+    return {
+        'statusCode': 200,
+        'body': JSON.stringify({
+            message: 'hello world'
+        })
     }
 };
 
